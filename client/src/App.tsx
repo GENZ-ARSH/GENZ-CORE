@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { useState } from "react";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -20,19 +21,65 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
 function Router() {
+  const [location] = useLocation();
+  const isAdminRoute = location.startsWith("/admin");
+  
   return (
-    <MainLayout>
+    <MainLayout showAdminSidebar={isAdminRoute}>
       <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/library" component={Library} />
-        <Route path="/request" component={BookRequest} />
-        <Route path="/admin" component={AdminPanel} />
-        <Route path="/tasks" component={Tasks} />
-        <Route path="/team" component={TeamDashboard} />
-        <Route path="/downloads" component={DownloadCenter} />
-        <Route path="/profile" component={Profile} />
-        <Route path="/settings" component={Settings} />
-        <Route component={NotFound} />
+        {/* User routes */}
+        <Route path="/">
+          {() => <Home />}
+        </Route>
+        <Route path="/library">
+          {() => <Library />}
+        </Route>
+        <Route path="/book-request">
+          {() => <BookRequest />}
+        </Route>
+        <Route path="/team">
+          {() => <TeamDashboard />}
+        </Route>
+        <Route path="/download-center">
+          {() => <DownloadCenter />}
+        </Route>
+        <Route path="/profile">
+          {() => <Profile />}
+        </Route>
+        <Route path="/settings">
+          {() => <Settings />}
+        </Route>
+        
+        {/* Admin routes */}
+        <Route path="/admin">
+          {() => <AdminPanel />}
+        </Route>
+        <Route path="/admin/books">
+          {() => <AdminPanel section="books" />}
+        </Route>
+        <Route path="/admin/book-requests">
+          {() => <AdminPanel section="bookRequests" />}
+        </Route>
+        <Route path="/admin/users">
+          {() => <AdminPanel section="users" />}
+        </Route>
+        <Route path="/admin/analytics">
+          {() => <AdminPanel section="analytics" />}
+        </Route>
+        <Route path="/admin/tasks">
+          {() => <Tasks />}
+        </Route>
+        <Route path="/admin/downloads">
+          {() => <AdminPanel section="downloads" />}
+        </Route>
+        <Route path="/admin/settings">
+          {() => <Settings isAdmin={true} />}
+        </Route>
+        
+        {/* Fallback route */}
+        <Route>
+          {() => <NotFound />}
+        </Route>
       </Switch>
     </MainLayout>
   );

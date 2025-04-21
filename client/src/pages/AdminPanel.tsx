@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { 
@@ -46,12 +46,32 @@ import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/contexts/UserContext';
 import { books as mockBooks, bookRequests, users } from '@/lib/mockData';
 
-export default function AdminPanel() {
+interface AdminPanelProps {
+  section?: string;
+}
+
+export default function AdminPanel({ section = 'books' }: AdminPanelProps) {
   const { user } = useUser();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('books');
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
+  // Update active tab when section prop changes
+  useEffect(() => {
+    // Map section prop to actual tab values
+    const sectionToTabMapping: Record<string, string> = {
+      'books': 'books',
+      'bookRequests': 'requests',
+      'users': 'users',
+      'analytics': 'analytics',
+      'downloads': 'downloads'
+    };
+    
+    if (section && sectionToTabMapping[section]) {
+      setActiveTab(sectionToTabMapping[section]);
+    }
+  }, [section]);
 
   // In a real app, we would fetch this data from the server
   /*

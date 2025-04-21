@@ -103,7 +103,11 @@ const AppearanceIcon = (props: LucideProps) => <PaletteIcon {...props} />;
 const AccountIcon = (props: LucideProps) => <User {...props} />;
 const NotificationsIcon = (props: LucideProps) => <Bell {...props} />;
 
-export default function Settings() {
+interface SettingsProps {
+  isAdmin?: boolean;
+}
+
+export default function Settings({ isAdmin = false }: SettingsProps) {
   const { theme, toggleTheme } = useTheme();
   const { user } = useUser();
   const { toast } = useToast();
