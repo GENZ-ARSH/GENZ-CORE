@@ -19,11 +19,16 @@ import TeamDashboard from "./pages/TeamDashboard";
 import DownloadCenter from "./pages/DownloadCenter";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Courses from './pages/Courses';
+import Forums from './pages/Forums';
+import StudyGroups from './pages/StudyGroups';
+import PracticeTests from './pages/PracticeTests';
+import ProgressTracking from './pages/ProgressTracking';
 
 function Router() {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith("/admin");
-  
+
   return (
     <MainLayout showAdminSidebar={isAdminRoute}>
       <Switch>
@@ -49,7 +54,22 @@ function Router() {
         <Route path="/settings">
           {() => <Settings />}
         </Route>
-        
+        <Route path="/courses">
+          {() => <Courses />}
+        </Route>
+        <Route path="/forums">
+          {() => <Forums />}
+        </Route>
+        <Route path="/study-groups">
+          {() => <StudyGroups />}
+        </Route>
+        <Route path="/practice-tests">
+          {() => <PracticeTests />}
+        </Route>
+        <Route path="/progress">
+          {() => <ProgressTracking />}
+        </Route>
+
         {/* Admin routes */}
         <Route path="/admin">
           {() => <AdminPanel />}
@@ -75,7 +95,7 @@ function Router() {
         <Route path="/admin/settings">
           {() => <Settings isAdmin={true} />}
         </Route>
-        
+
         {/* Fallback route */}
         <Route>
           {() => <NotFound />}

@@ -9,21 +9,29 @@ import {
   Download,
   ClipboardList,
   LogOut,
-  LayoutDashboard
+  LayoutDashboard,
+  BookOpen,
+  Library,
+  MessageSquare,
+  LineChart,
+  CheckSquare
 } from 'lucide-react';
 
 export default function Sidebar() {
   const [location] = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Books', href: '/admin/books', icon: Book },
-    { name: 'Book Requests', href: '/admin/book-requests', icon: FileText },
-    { name: 'Users', href: '/admin/users', icon: Users },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart },
-    { name: 'Tasks', href: '/admin/tasks', icon: ClipboardList },
-    { name: 'Downloads', href: '/admin/downloads', icon: Download },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Courses', href: '/courses', icon: BookOpen },
+    { name: 'Library', href: '/library', icon: Library },
+    { name: 'Forums', href: '/forums', icon: MessageSquare },
+    { name: 'Study Groups', href: '/study-groups', icon: Users },
+    { name: 'Practice Tests', href: '/practice-tests', icon: FileText },
+    { name: 'Progress Tracking', href: '/progress', icon: LineChart },
+    { name: 'Downloads', href: '/downloads', icon: Download },
+    { name: 'Tasks', href: '/tasks', icon: CheckSquare },
+    { name: 'Team Dashboard', href: '/team', icon: Users },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (
