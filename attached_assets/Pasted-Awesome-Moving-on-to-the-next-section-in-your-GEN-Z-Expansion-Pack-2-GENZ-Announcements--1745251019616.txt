@@ -1,0 +1,139 @@
+Awesome! Moving on to the next section in your GEN-Z Expansion Pack:
+
+
+---
+
+✅ 2. GENZ Announcements Board
+
+Goal:
+
+Create an admin-only announcement panel where admins can post important updates like:
+
+“New batch uploaded”
+
+“Site maintenance notice”
+
+“Top contributor of the week”
+
+
+Users can only view the announcements. Admins can add/delete/edit posts.
+
+
+---
+
+Prompt Structure for GENZ Announcements
+
+1. General Requirements
+
+Section/Page: announcements.html
+
+Use TailwindCSS for layout
+
+Use Firebase Firestore to store announcements
+
+Admins are verified using localStorage.isAdmin === true
+
+All users can view updates in a card layout
+
+Admins see “Add Announcement” button
+
+
+
+---
+
+2. UI Structure
+
+Header:
+
+Title: GENZ Announcements
+
+Subtext: "Stay Updated with TeamGENZ News"
+
+
+Announcement Feed:
+
+Card-style layout showing each announcement:
+
+Title
+
+Message/Description
+
+Posted by (Admin Name or “GENZ TEAM”)
+
+Timestamp
+
+
+
+Admin Controls:
+
+Floating “+” button or fixed button for Add Announcement
+
+Admins can:
+
+Add Title + Message
+
+Edit/Delete their announcements
+
+
+
+
+---
+
+3. Firebase Firestore Structure
+
+Example:
+
+/announcements
+  /autoDocID
+    - title: "New Chemistry Batch Uploaded"
+    - message: "Check out the PW Arjuna Batch in Class 12 Section!"
+    - postedBy: "GENZCLANX"
+    - time: "2025-04-21T11:00"
+
+
+---
+
+4. Functional Features
+
+Real-time display of announcements (onSnapshot listener)
+
+Admin-only:
+
+Add/edit/delete UI
+
+Button only shows if localStorage.isAdmin === true
+
+
+Timestamps formatted as: "Posted on April 21, 2025 – 11:00 AM"
+
+
+
+---
+
+5. Future Enhancements (Optional)
+
+Notification icon on homepage if a new announcement is added
+
+Tag system (e.g., #Books, #Update, #Batch, #Event)
+
+Markdown support in messages (bold, italic, links)
+
+
+
+---
+
+Final Prompt Wrap-up:
+
+> Build a fully functional GENZ Announcements Board using Firebase Firestore + TailwindCSS. Allow admins (via localStorage check) to add, edit, and delete announcements. Display all announcements in a card layout with timestamps and posted-by field. Use real-time syncing to update all users live.
+
+
+
+
+---
+
+Next:
+
+Do you want me to now generate the full working announcements.html code with Firebase & Tailwind, just like the chat room?
+
+Or should we move ahead to Section 3: GENZ Leaderboard prompt setup?
+
