@@ -20,7 +20,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Users, UserCheck, ChevronRight } from 'lucide-react';
 import { users } from '@/lib/mockData';
-import ChatBox from '@/components/chat/ChatBox'; // Importing the ChatBox component
+import ChatBox from '@/components/chat/ChatBox';
+import AnnouncementBoard from '@/components/announcements/AnnouncementBoard';
 
 interface TeamMember {
   id: number;
@@ -313,7 +314,10 @@ export default function TeamDashboard() {
           <Button variant="outline">View All Projects</Button>
         </CardFooter>
       </Card>
-      <ChatBox /> {/* Adding the ChatBox component */}
+      <div className="grid gap-6 mt-6">
+        <AnnouncementBoard />
+        <ChatBox />
+      </div>
     </div>
   );
 }
