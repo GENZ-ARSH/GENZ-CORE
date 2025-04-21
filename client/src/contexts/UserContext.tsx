@@ -1,54 +1,131 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { User } from '@shared/schema';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import pb, { isUserValid, getCurrentUser, login as pbLogin, logout as pbLogout } from '@/lib/pocketbase';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserContextType {
   user: User | null;
   isLoading: boolean;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  checkAdminPassword: (password: string) => boolean;
+  isAuthenticated: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  // For now, use a mock user since we don't have a real authentication system
-  const mockUser: User = {
-    id: 1,
-    username: 'aryan.sharma',
-    password: '',
-    fullName: 'Aryan Sharma',
-    email: 'aryan@example.com',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&q=80',
-    role: 'admin'
+  const { toast } = useToast();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Check if user is already authenticated when the component mounts
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        if (isUserValid()) {
+          const pbUser = getCurrentUser();
+          if (pbUser) {
+            // Convert PocketBase user to our User type
+            setUser({
+              id: Number(pbUser.id),
+              username: pbUser.username,
+              password: '',
+              fullName: pbUser.name || pbUser.username,
+              email: pbUser.email,
+              avatar: pbUser.avatar ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${pbUser.collectionId}/${pbUser.id}/${pbUser.avatar}` : null,
+              role: pbUser.role || 'user'
+            });
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+  
+  // Login function
+  const login = async (username: string, password: string) => {
+    try {
+      setIsLoading(true);
+      const authData = await pbLogin(username, password);
+      const pbUser = authData.record;
+      
+      setUser({
+        id: Number(pbUser.id),
+        username: pbUser.username,
+        password: '',
+        fullName: pbUser.name || pbUser.username,
+        email: pbUser.email,
+        avatar: pbUser.avatar ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${pbUser.collectionId}/${pbUser.id}/${pbUser.avatar}` : null,
+        role: pbUser.role || 'user'
+      });
+      
+      setIsAuthenticated(true);
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${pbUser.username}!`,
+      });
+      
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      toast({
+        title: "Login failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const [user, setUser] = useState<User | null>(mockUser);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // In a real app, we would fetch the user from the server
-  /*
-  const { data: user, isLoading } = useQuery({
-    queryKey: ['/api/users/me'],
-    staleTime: Infinity,
-  });
-  */
-
+  // Logout function
   const logout = async () => {
     try {
       setIsLoading(true);
-      // In a real app, we would call the logout API
-      // await apiRequest('POST', '/api/auth/logout');
+      pbLogout();
       setUser(null);
+      setIsAuthenticated(false);
+      
+      toast({
+        title: "Logged out",
+        description: "You've been successfully logged out.",
+      });
+      
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       setIsLoading(false);
     }
   };
+  
+  // Admin password check
+  const checkAdminPassword = (password: string) => {
+    const ADMIN_PASSWORD = 'GENZCLANX';  // In production, this should be an env variable
+    return password === ADMIN_PASSWORD;
+  };
 
   return (
-    <UserContext.Provider value={{ user, isLoading, logout }}>
+    <UserContext.Provider 
+      value={{ 
+        user, 
+        isLoading, 
+        login, 
+        logout, 
+        checkAdminPassword,
+        isAuthenticated
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
