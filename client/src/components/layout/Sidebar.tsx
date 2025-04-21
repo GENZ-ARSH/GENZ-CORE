@@ -9,8 +9,7 @@ import {
   Download,
   ClipboardList,
   LogOut,
-  LayoutDashboard,
-  LineChart
+  LayoutDashboard
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -25,9 +24,6 @@ export default function Sidebar() {
     { name: 'Tasks', href: '/admin/tasks', icon: ClipboardList },
     { name: 'Downloads', href: '/admin/downloads', icon: Download },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
-    { name: 'Study Groups', href: '/admin/study-groups', icon: Users },
-    { name: 'Practice Tests', href: '/admin/practice-tests', icon: FileText },
-    { name: 'Progress', href: '/admin/progress', icon: LineChart },
   ];
 
   return (
