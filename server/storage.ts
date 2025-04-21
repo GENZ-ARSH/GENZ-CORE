@@ -3,8 +3,13 @@ import {
   books, type Book, type InsertBook,
   tasks, type Task, type InsertTask,
   bookRequests, type BookRequest, type InsertBookRequest,
-  activities, type Activity, type InsertActivity
+  activities, type Activity, type InsertActivity,
+  documents, type Document, type InsertDocument,
+  documentCollaborators, type DocumentCollaborator, type InsertDocumentCollaborator,
+  documentOperations, type DocumentOperation, type InsertDocumentOperation
 } from "@shared/schema";
+import { eq, and, desc } from "drizzle-orm";
+import { db } from "./db";
 
 export interface IStorage {
   // User methods
@@ -37,6 +42,24 @@ export interface IStorage {
   // Activity methods
   getActivities(): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  
+  // Document collaboration methods
+  getDocuments(): Promise<Document[]>;
+  getDocumentsByUser(userId: number): Promise<Document[]>;
+  getDocument(id: number): Promise<Document | undefined>;
+  createDocument(document: InsertDocument): Promise<Document>;
+  updateDocument(id: number, document: Partial<Document>): Promise<Document | undefined>;
+  deleteDocument(id: number): Promise<boolean>;
+  
+  // Document collaborators methods
+  getDocumentCollaborators(documentId: number): Promise<DocumentCollaborator[]>;
+  addCollaborator(collaborator: InsertDocumentCollaborator): Promise<DocumentCollaborator>;
+  removeCollaborator(documentId: number, userId: number): Promise<boolean>;
+  
+  // Document operations methods
+  getDocumentOperations(documentId: number): Promise<DocumentOperation[]>;
+  createDocumentOperation(operation: InsertDocumentOperation): Promise<DocumentOperation>;
+  getLatestVersion(documentId: number): Promise<number>;
 }
 
 export class MemStorage implements IStorage {
@@ -447,4 +470,313 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// DatabaseStorage implementation
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users);
+  }
+
+  // Book methods
+  async getBooks(): Promise<Book[]> {
+    return db.select().from(books);
+  }
+
+  async getBook(id: number): Promise<Book | undefined> {
+    const [book] = await db.select().from(books).where(eq(books.id, id));
+    return book || undefined;
+  }
+
+  async createBook(insertBook: InsertBook): Promise<Book> {
+    const [book] = await db
+      .insert(books)
+      .values(insertBook)
+      .returning();
+    return book;
+  }
+
+  async updateBook(id: number, bookData: Partial<Book>): Promise<Book | undefined> {
+    const [book] = await db
+      .update(books)
+      .set(bookData)
+      .where(eq(books.id, id))
+      .returning();
+    return book || undefined;
+  }
+
+  async deleteBook(id: number): Promise<boolean> {
+    const result = await db.delete(books).where(eq(books.id, id));
+    return !!result;
+  }
+
+  async incrementDownloadCount(id: number): Promise<Book | undefined> {
+    const [book] = await db
+      .select()
+      .from(books)
+      .where(eq(books.id, id));
+    
+    if (!book) return undefined;
+    
+    const [updatedBook] = await db
+      .update(books)
+      .set({ downloadCount: (book.downloadCount || 0) + 1 })
+      .where(eq(books.id, id))
+      .returning();
+    
+    return updatedBook;
+  }
+
+  // Task methods
+  async getTasks(): Promise<Task[]> {
+    return db.select().from(tasks);
+  }
+
+  async getTask(id: number): Promise<Task | undefined> {
+    const [task] = await db.select().from(tasks).where(eq(tasks.id, id));
+    return task || undefined;
+  }
+
+  async createTask(insertTask: InsertTask): Promise<Task> {
+    const [task] = await db
+      .insert(tasks)
+      .values(insertTask)
+      .returning();
+    return task;
+  }
+
+  async updateTask(id: number, taskData: Partial<Task>): Promise<Task | undefined> {
+    const [task] = await db
+      .update(tasks)
+      .set(taskData)
+      .where(eq(tasks.id, id))
+      .returning();
+    return task || undefined;
+  }
+
+  async deleteTask(id: number): Promise<boolean> {
+    const result = await db.delete(tasks).where(eq(tasks.id, id));
+    return !!result;
+  }
+
+  // Book Request methods
+  async getBookRequests(): Promise<BookRequest[]> {
+    return db.select().from(bookRequests);
+  }
+
+  async getBookRequest(id: number): Promise<BookRequest | undefined> {
+    const [request] = await db.select().from(bookRequests).where(eq(bookRequests.id, id));
+    return request || undefined;
+  }
+
+  async createBookRequest(insertRequest: InsertBookRequest): Promise<BookRequest> {
+    const [request] = await db
+      .insert(bookRequests)
+      .values(insertRequest)
+      .returning();
+    return request;
+  }
+
+  async updateBookRequest(id: number, requestData: Partial<BookRequest>): Promise<BookRequest | undefined> {
+    const [request] = await db
+      .update(bookRequests)
+      .set(requestData)
+      .where(eq(bookRequests.id, id))
+      .returning();
+    return request || undefined;
+  }
+
+  // Activity methods
+  async getActivities(): Promise<Activity[]> {
+    return db.select().from(activities).orderBy(desc(activities.timestamp));
+  }
+
+  async createActivity(insertActivity: InsertActivity): Promise<Activity> {
+    const [activity] = await db
+      .insert(activities)
+      .values(insertActivity)
+      .returning();
+    return activity;
+  }
+
+  // Document collaboration methods
+  async getDocuments(): Promise<Document[]> {
+    return db.select().from(documents);
+  }
+
+  async getDocumentsByUser(userId: number): Promise<Document[]> {
+    // Get documents created by the user
+    const userDocuments = await db
+      .select()
+      .from(documents)
+      .where(eq(documents.createdBy, userId));
+    
+    // Get documents where the user is a collaborator
+    const collaborativeDocumentIds = await db
+      .select({ documentId: documentCollaborators.documentId })
+      .from(documentCollaborators)
+      .where(eq(documentCollaborators.userId, userId));
+    
+    const collaborativeDocuments = collaborativeDocumentIds.length > 0
+      ? await db
+          .select()
+          .from(documents)
+          .where(
+            documents.id.in(collaborativeDocumentIds.map(d => d.documentId))
+          )
+      : [];
+    
+    // Combine and remove duplicates
+    const allDocs = [...userDocuments, ...collaborativeDocuments];
+    const uniqueDocs = allDocs.filter((doc, index, self) => 
+      index === self.findIndex(d => d.id === doc.id)
+    );
+    
+    return uniqueDocs;
+  }
+
+  async getDocument(id: number): Promise<Document | undefined> {
+    const [document] = await db.select().from(documents).where(eq(documents.id, id));
+    return document || undefined;
+  }
+
+  async createDocument(insertDocument: InsertDocument): Promise<Document> {
+    const [document] = await db
+      .insert(documents)
+      .values(insertDocument)
+      .returning();
+    return document;
+  }
+
+  async updateDocument(id: number, documentData: Partial<Document>): Promise<Document | undefined> {
+    // Set updatedAt to current time
+    const dataWithTimestamp = {
+      ...documentData,
+      updatedAt: new Date()
+    };
+    
+    const [document] = await db
+      .update(documents)
+      .set(dataWithTimestamp)
+      .where(eq(documents.id, id))
+      .returning();
+    
+    return document || undefined;
+  }
+
+  async deleteDocument(id: number): Promise<boolean> {
+    // First delete all collaborators
+    await db.delete(documentCollaborators).where(eq(documentCollaborators.documentId, id));
+    
+    // Then delete all operations
+    await db.delete(documentOperations).where(eq(documentOperations.documentId, id));
+    
+    // Finally delete the document
+    const result = await db.delete(documents).where(eq(documents.id, id));
+    return !!result;
+  }
+
+  // Document collaborators methods
+  async getDocumentCollaborators(documentId: number): Promise<DocumentCollaborator[]> {
+    return db
+      .select()
+      .from(documentCollaborators)
+      .where(eq(documentCollaborators.documentId, documentId));
+  }
+
+  async addCollaborator(insertCollaborator: InsertDocumentCollaborator): Promise<DocumentCollaborator> {
+    // Check if collaborator already exists
+    const [existing] = await db
+      .select()
+      .from(documentCollaborators)
+      .where(
+        and(
+          eq(documentCollaborators.documentId, insertCollaborator.documentId),
+          eq(documentCollaborators.userId, insertCollaborator.userId)
+        )
+      );
+    
+    if (existing) {
+      // If exists but access level is different, update it
+      if (existing.accessLevel !== insertCollaborator.accessLevel) {
+        const [updated] = await db
+          .update(documentCollaborators)
+          .set({ accessLevel: insertCollaborator.accessLevel })
+          .where(eq(documentCollaborators.id, existing.id))
+          .returning();
+        return updated;
+      }
+      return existing;
+    }
+    
+    // Otherwise create new collaborator
+    const [collaborator] = await db
+      .insert(documentCollaborators)
+      .values(insertCollaborator)
+      .returning();
+    
+    return collaborator;
+  }
+
+  async removeCollaborator(documentId: number, userId: number): Promise<boolean> {
+    const result = await db
+      .delete(documentCollaborators)
+      .where(
+        and(
+          eq(documentCollaborators.documentId, documentId),
+          eq(documentCollaborators.userId, userId)
+        )
+      );
+    
+    return !!result;
+  }
+
+  // Document operations methods
+  async getDocumentOperations(documentId: number): Promise<DocumentOperation[]> {
+    return db
+      .select()
+      .from(documentOperations)
+      .where(eq(documentOperations.documentId, documentId))
+      .orderBy(documentOperations.version);
+  }
+
+  async createDocumentOperation(insertOperation: InsertDocumentOperation): Promise<DocumentOperation> {
+    const [operation] = await db
+      .insert(documentOperations)
+      .values(insertOperation)
+      .returning();
+    
+    return operation;
+  }
+
+  async getLatestVersion(documentId: number): Promise<number> {
+    const [result] = await db
+      .select({ maxVersion: documentOperations.version })
+      .from(documentOperations)
+      .where(eq(documentOperations.documentId, documentId))
+      .orderBy(desc(documentOperations.version))
+      .limit(1);
+    
+    return result?.maxVersion || 0;
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();

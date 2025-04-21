@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -104,3 +105,93 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
 
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type Activity = typeof activities.$inferSelect;
+
+// Document collaboration tables
+export const documents = pgTable("documents", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").default(""),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  createdBy: integer("created_by").references(() => users.id),
+  bookId: integer("book_id").references(() => books.id),
+  isPublic: boolean("is_public").default(false),
+});
+
+export const insertDocumentSchema = createInsertSchema(documents).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertDocument = z.infer<typeof insertDocumentSchema>;
+export type Document = typeof documents.$inferSelect;
+
+export const documentCollaborators = pgTable("document_collaborators", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").references(() => documents.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  accessLevel: text("access_level").default("read").notNull(), // 'read', 'write', 'admin'
+  joinedAt: timestamp("joined_at").defaultNow(),
+});
+
+export const insertDocumentCollaboratorSchema = createInsertSchema(documentCollaborators).omit({
+  id: true,
+  joinedAt: true,
+});
+
+export type InsertDocumentCollaborator = z.infer<typeof insertDocumentCollaboratorSchema>;
+export type DocumentCollaborator = typeof documentCollaborators.$inferSelect;
+
+export const documentOperations = pgTable("document_operations", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").references(() => documents.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  operation: jsonb("operation").notNull(), // Store operation as JSON (insert, delete, etc.)
+  timestamp: timestamp("timestamp").defaultNow(),
+  version: integer("version").notNull(), // Document version after this operation
+});
+
+export const insertDocumentOperationSchema = createInsertSchema(documentOperations).omit({
+  id: true,
+  timestamp: true,
+});
+
+export type InsertDocumentOperation = z.infer<typeof insertDocumentOperationSchema>;
+export type DocumentOperation = typeof documentOperations.$inferSelect;
+
+// Define relations
+export const documentsRelations = relations(documents, ({ one, many }) => ({
+  createdByUser: one(users, {
+    fields: [documents.createdBy],
+    references: [users.id],
+  }),
+  book: one(books, {
+    fields: [documents.bookId],
+    references: [books.id],
+  }),
+  collaborators: many(documentCollaborators),
+  operations: many(documentOperations),
+}));
+
+export const documentCollaboratorsRelations = relations(documentCollaborators, ({ one }) => ({
+  document: one(documents, {
+    fields: [documentCollaborators.documentId],
+    references: [documents.id],
+  }),
+  user: one(users, {
+    fields: [documentCollaborators.userId],
+    references: [users.id],
+  }),
+}));
+
+export const documentOperationsRelations = relations(documentOperations, ({ one }) => ({
+  document: one(documents, {
+    fields: [documentOperations.documentId],
+    references: [documents.id],
+  }),
+  user: one(users, {
+    fields: [documentOperations.userId],
+    references: [users.id],
+  }),
+}));
