@@ -19,7 +19,34 @@ export function ProgressChart() {
         <CardTitle>Study Progress</CardTitle>
       </CardHeader>
       <CardContent>
-        <Line data={data} />
+        <Line 
+          data={data}
+          options={{
+            responsive: true,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            plugins: {
+              tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+              },
+              legend: {
+                position: 'bottom',
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }}
+        />
       </CardContent>
     </Card>
   );

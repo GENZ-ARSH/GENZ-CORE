@@ -140,13 +140,20 @@ export default function Library() {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
               </div>
-              <Input
-                type="text"
-                placeholder="Search by title, tag, or subject..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search by title, tag, or subject..."
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                    {filteredBooks.length} results
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Class Filter */}

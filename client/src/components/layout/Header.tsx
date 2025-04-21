@@ -89,15 +89,29 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="hover:bg-transparent hover:text-primary"
-            onClick={() => setIsAuthDialogOpen(true)}
-          >
-            <Lock className="h-5 w-5" />
-            <span className="sr-only">Login</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hover:bg-transparent hover:text-primary">
+                <Plus className="h-5 w-5" />
+                <span className="sr-only">Quick actions</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => navigate('/book-request')}>
+                <BookPlus className="mr-2 h-4 w-4" />
+                New Book Request
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/library')}>
+                <Search className="mr-2 h-4 w-4" />
+                Quick Search
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setIsAuthDialogOpen(true)}>
+                <Lock className="mr-2 h-4 w-4" />
+                Login
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <AuthDialog 
             isOpen={isAuthDialogOpen}
