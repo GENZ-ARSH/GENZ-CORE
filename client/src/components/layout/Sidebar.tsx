@@ -28,7 +28,7 @@ export default function Sidebar() {
 
   return (
     <div className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 z-30">
-      <div className="flex flex-col gap-y-5 overflow-y-auto bg-background border-r w-64 px-6 pb-4">
+      <div className="flex flex-col gap-y-5 overflow-y-auto bg-background/60 backdrop-blur-lg border-r border-r-primary/10 w-64 px-6 pb-4 shadow-[5px_0_15px_rgba(var(--primary),0.1)]">
         <div className="flex h-16 items-center border-b w-full">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
@@ -50,8 +50,8 @@ export default function Sidebar() {
                     className={cn(
                       "group flex gap-x-3 rounded-md p-2 text-sm font-medium",
                       isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        ? "bg-primary/20 text-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]"
+                        : "text-muted-foreground hover:bg-accent/30 hover:text-primary hover:shadow-[0_0_10px_rgba(var(--primary),0.1)] backdrop-blur-sm"
                     )}
                   >
                     <item.icon
