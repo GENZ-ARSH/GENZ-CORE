@@ -15,7 +15,7 @@ localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "Project"
+runButton = "Start PocketBase and Dev Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -49,3 +49,16 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "pocketbase serve"
+
+[[workflows.workflow]]
+name = "Start PocketBase and Dev Server"
+author = 40894644
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pocketbase serve"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
