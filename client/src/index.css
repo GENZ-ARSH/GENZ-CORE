@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    --glow-color: 263 85% 50%;
+    --neon-border: 190 80% 50%;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
