@@ -1,9 +1,25 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { Book, InsertBook, Task, InsertTask, BookRequest, InsertBookRequest, Activity, InsertActivity } from "@shared/schema";
+import { 
+  Book, InsertBook, 
+  Task, InsertTask, 
+  BookRequest, InsertBookRequest, 
+  Activity, InsertActivity,
+  Document, InsertDocument,
+  DocumentCollaborator, InsertDocumentCollaborator,
+  DocumentOperation, InsertDocumentOperation
+} from "@shared/schema";
 import { z } from "zod";
-import { insertBookSchema, insertTaskSchema, insertBookRequestSchema, insertActivitySchema } from "@shared/schema";
+import { 
+  insertBookSchema, 
+  insertTaskSchema, 
+  insertBookRequestSchema, 
+  insertActivitySchema,
+  insertDocumentSchema,
+  insertDocumentCollaboratorSchema,
+  insertDocumentOperationSchema
+} from "@shared/schema";
 import { WebSocketServer, WebSocket } from "ws";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -362,6 +378,194 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Document collaboration endpoints
+  app.get("/api/documents", async (req, res) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+      
+      let documents;
+      if (userId) {
+        documents = await storage.getDocumentsByUser(userId);
+      } else {
+        documents = await storage.getDocuments();
+      }
+      
+      res.json(documents);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching documents" });
+    }
+  });
+
+  app.get("/api/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const document = await storage.getDocument(id);
+      
+      if (!document) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+      
+      res.json(document);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching document" });
+    }
+  });
+
+  app.post("/api/documents", async (req, res) => {
+    try {
+      const documentData = insertDocumentSchema.parse(req.body);
+      const newDocument = await storage.createDocument(documentData);
+      
+      // Add creator as collaborator with admin access
+      if (newDocument.createdBy) {
+        await storage.addCollaborator({
+          documentId: newDocument.id,
+          userId: newDocument.createdBy,
+          accessLevel: 'admin'
+        });
+      }
+      
+      // Log activity
+      await storage.createActivity({
+        type: "document",
+        description: "created a new document",
+        userId: documentData.createdBy,
+        resourceId: newDocument.id,
+        resourceType: "document"
+      });
+      
+      res.status(201).json(newDocument);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid document data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating document" });
+    }
+  });
+
+  app.patch("/api/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const documentData = req.body;
+      
+      const updatedDocument = await storage.updateDocument(id, documentData);
+      
+      if (!updatedDocument) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+      
+      res.json(updatedDocument);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating document" });
+    }
+  });
+
+  app.delete("/api/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteDocument(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+      
+      res.json({ message: "Document deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting document" });
+    }
+  });
+
+  // Document collaborators endpoints
+  app.get("/api/documents/:id/collaborators", async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      const collaborators = await storage.getDocumentCollaborators(documentId);
+      
+      res.json(collaborators);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching collaborators" });
+    }
+  });
+
+  app.post("/api/documents/:id/collaborators", async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      const collaboratorData = {
+        ...req.body,
+        documentId
+      };
+      
+      const collaborator = await storage.addCollaborator(collaboratorData);
+      
+      // Log activity
+      await storage.createActivity({
+        type: "collaboration",
+        description: "added a collaborator to document",
+        userId: req.body.userId, // User who added the collaborator
+        resourceId: documentId,
+        resourceType: "document"
+      });
+      
+      res.status(201).json(collaborator);
+    } catch (error) {
+      res.status(500).json({ message: "Error adding collaborator" });
+    }
+  });
+
+  app.delete("/api/documents/:documentId/collaborators/:userId", async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.documentId);
+      const userId = parseInt(req.params.userId);
+      
+      const removed = await storage.removeCollaborator(documentId, userId);
+      
+      if (!removed) {
+        return res.status(404).json({ message: "Collaborator not found" });
+      }
+      
+      res.json({ message: "Collaborator removed successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error removing collaborator" });
+    }
+  });
+
+  // Document operations endpoints
+  app.get("/api/documents/:id/operations", async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      const operations = await storage.getDocumentOperations(documentId);
+      
+      res.json(operations);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching operations" });
+    }
+  });
+
+  app.post("/api/documents/:id/operations", async (req, res) => {
+    try {
+      const documentId = parseInt(req.params.id);
+      
+      // Get latest version and increment
+      const latestVersion = await storage.getLatestVersion(documentId);
+      const newVersion = latestVersion + 1;
+      
+      const operationData = {
+        ...req.body,
+        documentId,
+        version: newVersion
+      };
+      
+      const operation = await storage.createDocumentOperation(operationData);
+      
+      // Update the document's content if needed
+      // This would depend on the operation type
+      
+      res.status(201).json(operation);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating operation" });
+    }
+  });
+
   // Stats endpoints
   app.get("/api/stats", async (req, res) => {
     try {
@@ -454,7 +658,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('WebSocket client connected');
 
     // Handle client messages
-    ws.on('message', (message) => {
+    ws.on('message', async (message) => {
       try {
         const data = JSON.parse(message.toString());
         console.log('Received message:', data);
@@ -510,6 +714,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Handle real-time edits
             if (data.resourceId && data.resourceType) {
               const editSessionId = `${data.resourceType}_${data.resourceId}`;
+              
+              // Store operation in database if it's a document
+              if (data.resourceType === 'document') {
+                const documentId = data.resourceId;
+                
+                // Get latest version
+                const latestVersion = await storage.getLatestVersion(documentId);
+                const newVersion = latestVersion + 1;
+                
+                // Persist the operation
+                await storage.createDocumentOperation({
+                  documentId,
+                  userId: data.userId,
+                  operation: data.changes,
+                  version: newVersion
+                });
+                
+                // Update document content if needed
+                const document = await storage.getDocument(documentId);
+                if (document) {
+                  // Apply changes to document content (simplified for demo)
+                  // In a real application, this would use a more sophisticated algorithm
+                  // like Operational Transformation or CRDT
+                  
+                  let updatedContent = document.content || '';
+                  
+                  // Apply insert operations
+                  if (data.changes.type === 'insert') {
+                    const position = data.changes.position || 0;
+                    const text = data.changes.text || '';
+                    
+                    updatedContent = 
+                      updatedContent.substring(0, position) + 
+                      text + 
+                      updatedContent.substring(position);
+                  }
+                  
+                  // Apply delete operations
+                  if (data.changes.type === 'delete') {
+                    const position = data.changes.position || 0;
+                    const length = data.changes.length || 0;
+                    
+                    updatedContent = 
+                      updatedContent.substring(0, position) + 
+                      updatedContent.substring(position + length);
+                  }
+                  
+                  // Update the document
+                  await storage.updateDocument(documentId, { 
+                    content: updatedContent,
+                    updatedAt: new Date()
+                  });
+                  
+                  // Include version in the broadcast
+                  data.changes.version = newVersion;
+                }
+              }
               
               // Broadcast changes to all other clients in the session
               broadcastToSession(editSessionId, {
