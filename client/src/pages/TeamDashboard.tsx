@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Users, UserCheck, ChevronRight } from 'lucide-react';
 import { users } from '@/lib/mockData';
+import ChatBox from '@/components/chat/ChatBox'; // Importing the ChatBox component
 
 interface TeamMember {
   id: number;
@@ -60,7 +61,7 @@ const teamStats = {
 
 export default function TeamDashboard() {
   return (
-    <div className="fade-in">
+    <div className="container mx-auto p-4"> {/* Added container for better layout */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold mb-2">TeamGENZ Dashboard</h1>
@@ -68,7 +69,7 @@ export default function TeamDashboard() {
             Overview of team members, roles, and tasks
           </p>
         </div>
-        
+
         <Button>
           <UserCheck className="h-4 w-4 mr-2" />
           Invite Member
@@ -88,7 +89,7 @@ export default function TeamDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
@@ -102,7 +103,7 @@ export default function TeamDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
@@ -116,7 +117,7 @@ export default function TeamDashboard() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col">
@@ -312,6 +313,7 @@ export default function TeamDashboard() {
           <Button variant="outline">View All Projects</Button>
         </CardFooter>
       </Card>
+      <ChatBox /> {/* Adding the ChatBox component */}
     </div>
   );
 }
