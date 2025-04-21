@@ -107,7 +107,7 @@ export function AuthDialog({
       await login(data.username, data.password);
       onClose();
       if (redirectPath) {
-        navigate(redirectPath);
+        setLocation(redirectPath);
       }
     } catch (error) {
       console.error("Login error:", error);
