@@ -8,7 +8,7 @@ import {
   documentCollaborators, type DocumentCollaborator, type InsertDocumentCollaborator,
   documentOperations, type DocumentOperation, type InsertDocumentOperation
 } from "@shared/schema";
-import { eq, and, desc, inArray } from "drizzle-orm";
+import { eq, and, desc, or } from "drizzle-orm";
 import { db } from "./db";
 
 export interface IStorage {

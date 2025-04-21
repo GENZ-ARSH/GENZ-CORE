@@ -1,31 +1,35 @@
-import React from 'react';
-import Sidebar from './Sidebar';
+import { ReactNode, useState } from 'react';
 import Header from './Header';
-import { useSidebar } from '@/contexts/SidebarContext';
+import Footer from './Footer';
+import Sidebar from './Sidebar';
 
 interface MainLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  showAdminSidebar?: boolean;
 }
 
-export default function MainLayout({ children }: MainLayoutProps) {
-  const { isOpen } = useSidebar();
+export default function MainLayout({ children, showAdminSidebar = false }: MainLayoutProps) {
+  const [isAdmin, setIsAdmin] = useState(false);
   
+  const handleSetAdmin = (isAdmin: boolean) => {
+    setIsAdmin(isAdmin);
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      {isOpen && <Sidebar />}
+    <div className="flex min-h-screen flex-col">
+      <Header onSetAdmin={handleSetAdmin} />
       
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+      <div className="flex flex-1">
+        {isAdmin && showAdminSidebar && <Sidebar />}
         
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
-          <div className="max-w-7xl mx-auto fade-in">
+        <main className={`flex-1 ${isAdmin && showAdminSidebar ? 'lg:pl-64' : ''}`}>
+          <div className="container py-6 md:py-8">
             {children}
           </div>
         </main>
       </div>
+      
+      <Footer />
     </div>
   );
 }
