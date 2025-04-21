@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { useTheme } from '@/contexts/ThemeProvider';
+import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AuthDialog } from '@/components/auth/AuthDialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Sun, Moon, Lock, Search, Menu, X } from 'lucide-react';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sun, Moon, Lock, Search, Menu, X, LogOut, User as UserIcon, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -21,24 +23,25 @@ interface HeaderProps {
 
 export default function Header({ onSetAdmin }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout, isAuthenticated, checkAdminPassword } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const handleLogin = () => {
-    if (password === 'GENZCLANX') {
-      onSetAdmin(true);
-      setIsDialogOpen(false);
-      setPassword('');
-      setError('');
-    } else {
-      setError('Invalid password. Please try again.');
-    }
-  };
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    // Redirect to home if needed
+  };
+
+  const handleAdminAuth = (password: string) => {
+    const isAdmin = checkAdminPassword(password);
+    if (isAdmin) {
+      onSetAdmin(true);
+    }
+    return isAdmin;
   };
 
   return (
@@ -86,47 +89,21 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             <span className="sr-only">Toggle theme</span>
           </Button>
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hover:bg-transparent hover:text-primary"
-              >
-                <Lock className="h-5 w-5" />
-                <span className="sr-only">Admin login</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] border border-primary/30 shadow-lg shadow-primary/20 bg-background/90 backdrop-blur">
-              <DialogHeader>
-                <DialogTitle>Admin Login</DialogTitle>
-                <DialogDescription>
-                  Enter your password to access admin features.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="py-4">
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setError('');
-                  }}
-                  placeholder="Enter password"
-                  className={cn(error && "border-red-500")}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleLogin();
-                  }}
-                />
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-              </div>
-              <DialogFooter>
-                <Button onClick={handleLogin} className="w-full">
-                  Login
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="hover:bg-transparent hover:text-primary"
+            onClick={() => setIsAuthDialogOpen(true)}
+          >
+            <Lock className="h-5 w-5" />
+            <span className="sr-only">Login</span>
+          </Button>
+          
+          <AuthDialog 
+            isOpen={isAuthDialogOpen}
+            onClose={() => setIsAuthDialogOpen(false)}
+            defaultTab="admin"
+          />
           
           <Button 
             variant="ghost" 
@@ -173,6 +150,18 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             >
               Book Request
             </Link>
+            {!isAuthenticated && (
+              <Button 
+                variant="default" 
+                className="w-full mt-2"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setIsAuthDialogOpen(true);
+                }}
+              >
+                Login / Register
+              </Button>
+            )}
           </nav>
         </div>
       )}
