@@ -194,6 +194,25 @@ export default function Home() {
         )}
       </section>
 
+      {/* Quick Stats */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatsCard
+          title="Total Books"
+          value={books?.length || 0}
+          icon={<Book className="h-6 w-6" />}
+        />
+        <StatsCard
+          title="Downloads"
+          value="1.2k"
+          icon={<Download className="h-6 w-6" />}
+        />
+        <StatsCard
+          title="Active Users"
+          value="342"
+          icon={<Users className="h-6 w-6" />}
+        />
+      </section>
+
       {/* Statistics section */}
       <section className="bg-background rounded-xl border backdrop-blur-sm p-6 md:p-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Why Choose TeamGENZ?</h2>

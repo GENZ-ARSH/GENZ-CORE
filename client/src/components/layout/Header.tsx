@@ -53,7 +53,7 @@ export default function Header({ onSetAdmin }: HeaderProps) {
               TeamGENZ
             </span>
           </Link>
-          
+
           <div className="hidden md:flex">
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link href="/" className="transition-colors hover:text-primary">
@@ -68,7 +68,7 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             </nav>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="hidden md:flex relative w-full max-w-sm items-center">
             <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
@@ -78,7 +78,7 @@ export default function Header({ onSetAdmin }: HeaderProps) {
               className="pl-8 pr-2 py-1 w-[200px] sm:w-[300px] rounded-full border-muted-foreground/40"
             />
           </div>
-          
+
           <Button 
             variant="ghost" 
             size="icon" 
@@ -88,7 +88,7 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
           </Button>
-          
+
           <Button 
             variant="ghost" 
             size="icon"
@@ -98,13 +98,13 @@ export default function Header({ onSetAdmin }: HeaderProps) {
             <Lock className="h-5 w-5" />
             <span className="sr-only">Login</span>
           </Button>
-          
+
           <AuthDialog 
             isOpen={isAuthDialogOpen}
             onClose={() => setIsAuthDialogOpen(false)}
             defaultTab="admin"
           />
-          
+
           <Button 
             variant="ghost" 
             size="icon" 
@@ -116,7 +116,7 @@ export default function Header({ onSetAdmin }: HeaderProps) {
           </Button>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-border">

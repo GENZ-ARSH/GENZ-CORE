@@ -86,7 +86,25 @@ export default function Library() {
 
   return (
     <div className="fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+      <div className="space-y-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div className="w-full md:w-64 mb-4 md:mb-0">
+            <Input 
+              placeholder="Search books..." 
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Select onValueChange={(value) => setSelectedCategory(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map(cat => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold mb-2">Library & Resources</h1>

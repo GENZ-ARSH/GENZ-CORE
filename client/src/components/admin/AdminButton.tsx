@@ -21,8 +21,9 @@ export function AdminButton({ onSuccess }: AdminButtonProps) {
       <Button 
         variant="outline"
         onClick={() => setShowAdminAuth(true)}
-        className="bg-primary/80 backdrop-blur-sm"
+        className="bg-primary/80 backdrop-blur-sm flex items-center gap-2"
       >
+        <Shield className="h-4 w-4" />
         {isAdminMode ? "Admin Mode Active" : "Admin Login"}
       </Button>
       
