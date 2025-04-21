@@ -43,14 +43,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <UserProvider>
-          <SidebarProvider>
-            <CollaborationProvider>
+          <CollaborationProvider>
+            <SidebarProvider>
               <TooltipProvider>
                 <Toaster />
                 <Router />
               </TooltipProvider>
-            </CollaborationProvider>
-          </SidebarProvider>
+            </SidebarProvider>
+          </CollaborationProvider>
         </UserProvider>
       </ThemeProvider>
     </QueryClientProvider>

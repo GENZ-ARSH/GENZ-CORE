@@ -150,7 +150,7 @@ export default function Home() {
           {mockBooks.slice(0, 4).map((book) => (
             <div key={book.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden card-hover">
               <img 
-                src={book.coverImage} 
+                src={book.coverImage || ''} 
                 alt={`Book cover for ${book.title}`} 
                 className="h-40 w-full object-cover"
               />

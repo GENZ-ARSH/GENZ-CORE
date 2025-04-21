@@ -45,42 +45,44 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Neon glass light dark mode */
+    --background: 230 20% 10%;
     --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
+    
+    --card: 230 20% 13%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
+    
+    --popover: 230 20% 13%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
+    
+    --primary: 263 85% 50%;
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 230 20% 20%;
     --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 262.1 83.3% 57.8%;
+    
+    --muted: 230 20% 15%;
+    --muted-foreground: 215 20% 65%;
+    
+    --accent: 190 80% 50%;
     --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
+    
+    --destructive: 350 80% 50%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-
-    --sidebar-background: 222.2 47.4% 11.2%;
+    
+    --border: 230 20% 20%;
+    --input: 230 20% 16%;
+    --ring: 263 85% 50%;
+    
+    /* Sidebar styles */
+    --sidebar-background: 230 30% 8%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 262.1 83.3% 57.8%;
+    --sidebar-primary: 263 85% 50%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 190 80% 50%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --sidebar-border: 230 30% 15%;
+    --sidebar-ring: 263 85% 50%;
   }
 
   * {
@@ -118,5 +120,112 @@
   
   .card-hover:hover {
     transform: translateY(-4px);
+  }
+
+  /* Neon glass light effects */
+  .neon-glass {
+    background: rgba(30, 30, 45, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(100, 100, 255, 0.1);
+    box-shadow: 0 0 15px 1px rgba(140, 100, 255, 0.2);
+  }
+
+  .neon-glass-primary {
+    box-shadow: 0 0 15px 1px rgba(var(--primary) / 0.3);
+    border: 1px solid rgba(var(--primary) / 0.2);
+  }
+
+  .neon-glass-accent {
+    box-shadow: 0 0 15px 1px rgba(var(--accent) / 0.3);
+    border: 1px solid rgba(var(--accent) / 0.2);
+  }
+
+  .neon-text {
+    text-shadow: 0 0 8px rgba(var(--primary) / 0.7);
+  }
+
+  .neon-text-accent {
+    text-shadow: 0 0 8px rgba(var(--accent) / 0.7);
+  }
+
+  .neon-border {
+    position: relative;
+  }
+
+  .neon-border::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(45deg, 
+      rgba(var(--primary) / 0.7), 
+      rgba(var(--accent) / 0.7));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .glow-on-hover:hover {
+    box-shadow: 0 0 20px 5px rgba(var(--primary) / 0.4);
+  }
+
+  /* Neon glass button */
+  .neon-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: rgba(var(--primary) / 0.15);
+    border: 1px solid rgba(var(--primary) / 0.3);
+  }
+
+  .neon-button:hover {
+    background: rgba(var(--primary) / 0.3);
+    box-shadow: 0 0 15px rgba(var(--primary) / 0.6);
+  }
+
+  .neon-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(var(--primary) / 0.2),
+      transparent
+    );
+    transition: left 0.7s ease;
+  }
+
+  .neon-button:hover::before {
+    left: 100%;
+  }
+  
+  /* Shimmering effect */
+  @keyframes shimmer {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite linear;
   }
 }

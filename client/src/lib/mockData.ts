@@ -266,21 +266,21 @@ export const recentDownloads = [
     title: 'JEE Advanced Formula Sheet',
     fileType: 'PDF',
     fileSize: '2.4 MB',
-    icon: 'pdf'
+    icon: 'pdf' as 'pdf'
   },
   {
     id: 2,
     title: 'NEET Topic Weightage',
     fileType: 'XLSX',
     fileSize: '1.2 MB',
-    icon: 'excel'
+    icon: 'excel' as 'excel'
   },
   {
     id: 3,
     title: '12th Physics Notes',
     fileType: 'DOCX',
     fileSize: '3.8 MB',
-    icon: 'word'
+    icon: 'word' as 'word'
   }
 ];
 
@@ -325,10 +325,10 @@ export const dashboardActivities = activities.map(activity => {
 
   return {
     id: activity.id,
-    type: activity.type,
+    type: activity.type as 'upload' | 'download' | 'user' | 'request',
     title,
     description: activity.description,
-    time: formatTimeAgo(activity.timestamp),
+    time: formatTimeAgo(activity.timestamp || new Date()),
   };
 });
 
@@ -338,7 +338,7 @@ export const pendingTasks = tasks
   .map(task => ({
     id: task.id,
     title: task.title,
-    dueDate: formatDueDate(task.dueDate),
+    dueDate: formatDueDate(task.dueDate || new Date()),
     completed: false,
   }));
 
