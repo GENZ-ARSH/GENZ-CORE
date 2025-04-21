@@ -25,6 +25,9 @@ export default function Library() {
   const [selectedClass, setSelectedClass] = useState<string>('');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'popular'>('popular');
+  const [showAdminAuth, setShowAdminAuth] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
 
   // In a real app, we would fetch books from the server with filters
   /*
@@ -43,12 +46,12 @@ export default function Library() {
     const matchesSearch = searchQuery === '' || 
       book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+
     const matchesClass = selectedClass === '' || book.class === selectedClass;
-    
+
     const matchesSubject = selectedSubject === '' || 
       book.tags?.some(tag => tag.toLowerCase() === selectedSubject.toLowerCase());
-    
+
     return matchesSearch && matchesClass && matchesSubject;
   });
 
@@ -76,6 +79,11 @@ export default function Library() {
     // window.open(`/api/books/${id}/download`, '_blank');
   };
 
+  const handleAdminSuccess = () => {
+    setIsAdminMode(true);
+    setShowAdminAuth(false);
+  };
+
   return (
     <div className="fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -85,6 +93,18 @@ export default function Library() {
             Browse through our collection of educational resources
           </p>
         </div>
+        <Button 
+          variant="outline"
+          onClick={() => setShowAdminAuth(true)}
+        >
+          {isAdminMode ? "Admin Mode Active" : "Admin Login"}
+        </Button>
+      </div>
+
+      {/* Placeholder for Admin Auth Dialog - Requires additional component implementation */}
+      {/* This is a placeholder, a real implementation would be needed here */}
+      <div>
+        {/*AdminAuthDialog would go here*/}
       </div>
 
       {/* Filters */}
