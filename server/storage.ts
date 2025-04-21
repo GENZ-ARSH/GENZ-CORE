@@ -8,7 +8,7 @@ import {
   documentCollaborators, type DocumentCollaborator, type InsertDocumentCollaborator,
   documentOperations, type DocumentOperation, type InsertDocumentOperation
 } from "@shared/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, inArray } from "drizzle-orm";
 import { db } from "./db";
 
 export interface IStorage {
@@ -639,7 +639,12 @@ export class DatabaseStorage implements IStorage {
           .select()
           .from(documents)
           .where(
-            documents.id.in(collaborativeDocumentIds.map(d => d.documentId))
+            collaborativeDocumentIds.length === 1
+              ? eq(documents.id, collaborativeDocumentIds[0].documentId)
+              : collaborativeDocumentIds.map(d => d.documentId).reduce((acc, id, index) => {
+                  if (index === 0) return eq(documents.id, id);
+                  return or(acc, eq(documents.id, id));
+                }, eq(documents.id, -1)) // Start with a condition that's always false
           )
       : [];
     
