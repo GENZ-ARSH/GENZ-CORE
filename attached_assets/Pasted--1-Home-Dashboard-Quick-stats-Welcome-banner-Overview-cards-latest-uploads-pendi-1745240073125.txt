@@ -1,0 +1,156 @@
+🏠 1. Home Dashboard
+
+    Quick stats
+
+    Welcome banner
+
+    Overview cards (latest uploads, pending tasks, etc.)
+
+📚 2. Library / Resources
+
+    Book cards with cover + tags
+
+    Filters (Class, Exam, Subject)
+
+    Search bar + Sort by newest/popular
+
+✍️ 3. Request a Book / Resource
+
+    Form to request content
+
+    Optional file upload
+
+    View submitted requests (admin only)
+
+🛠️ 4. Admin Panel
+
+    Add/edit/delete books/resources
+
+    Manage users, requests
+
+    Firebase/Firestore integration
+
+✅ 5. To-Do & Task Manager
+
+    Assignments or project list
+
+    Status: Todo / In Progress / Done
+
+    Filter by member or deadline
+
+🧠 6. TeamGENZ Dashboard
+
+    List of GENZ BROZ
+
+    Tasks + Roles
+
+    Progress bars & avatars
+
+🥇 7. Leaderboard / XP System
+
+    Points for uploading, completing tasks
+
+    Badges & levels
+
+    Gamified rankings
+
+📥 8. Download Center
+
+    Files grouped by subject/class
+
+    File size, format, download count
+
+    Multi-download & copy link features
+
+🧾 9. Announcements / Updates
+
+    Timeline of changes
+
+    Admin can post news or updates
+
+    Optionally add audio or GIF banners 😜
+
+💬 10. Feedback & Comments
+
+    Comment system per resource or section
+
+    Emojis, threading, likes
+
+    Report/flag option
+
+🧩 11. Custom Tools Hub
+
+    Calculator, Timer, Notepad
+
+    Markdown Editor or AI Bot
+
+    Embed tools like Desmos, PDF viewer, etc.
+
+🪪 12. User Profile
+
+    View/edit profile details
+
+    Avatar upload
+
+    My downloads / My tasks
+
+🧰 13. Settings
+
+    Theme toggle
+
+    Notification preferences
+
+    Account options
+
+🖼️ 14. Gallery / Screenshots
+
+    Showcase section (certificates, top tasks, app screenshots)
+
+    Masonry layout or slider
+
+💻 15. Dev Panel
+
+    Real-time logs (actions, uploads)
+
+    Version control notes
+
+    Upcoming features checklist
+
+🌐 16. Community Zone (Optional)
+
+    Chatroom / Forum style Q&A
+
+    Share tips, doubts, links
+
+    Optional auth for access
+
+🧾 17. Reports & Logs
+
+    Downloadable PDF/CSV reports
+
+    Action history (uploads, edits, deletions)
+
+    Admin only
+
+🧪 18. Experimental Labs
+
+    Upcoming features in beta
+
+    Feedback collection per experiment
+
+🎁 19. Rewards & Achievements
+
+    Daily login rewards
+
+    Unlockable profile themes/badges
+
+    Spin wheel or random XP drop
+
+🧱 20. Modular Builder Panel
+
+    Create new sections or upload blocks
+
+    Drag-drop layout builder
+
+    Save/export config
+

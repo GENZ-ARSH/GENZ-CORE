@@ -1,0 +1,85 @@
+A Single Page App (SPA) with:
+
+    📚 Book Management System
+
+    🔄 Real-Time Sync using PocketBase
+
+    🧑‍💻 Admins can add / edit / delete books
+
+    👨‍🎓 Users can view / search / filter books
+
+    ☁️ Book data saved in PocketBase collection
+
+    🖼️ Optional: Cover uploads to PocketBase file storage
+
+✅ Prompt to Use (aka your "Mission Brief")
+
+    💬 Prompt:
+
+    "Create a modern SPA using HTML + TailwindCSS (or React if needed) that connects to PocketBase backend for real-time book management. The app should include:
+
+        Book list view (title, author, tags, cover image)
+
+        Admin panel with add/edit/delete functionality
+
+        Real-time syncing (when a book is added/edited by any user, it's reflected instantly)
+
+        Optional login system with role-based access control (admin vs user)
+
+        File upload support for book covers using PocketBase storage
+
+        Search & filter by tags/class
+
+        Persistent theme (dark/light toggle) using localStorage Use PocketBase's REST API/WebSocket client for real-time updates. Ensure clean UI and modular component structure."
+
+🧰 PocketBase Setup (before dev)
+
+Here’s what you'll need:
+
+    Install PocketBase
+
+    ./pocketbase serve
+
+    Create Collection: books
+
+        Fields:
+
+            title (text)
+
+            author (text)
+
+            tags (list of strings)
+
+            cover (file/image)
+
+            class (select: 9th–12th, JEE, NEET, etc.)
+
+    (Optional) Create Auth Collection:
+
+        For login system (Admins/Users)
+
+📦 PocketBase JS SDK
+
+Use PocketBase’s client:
+
+<script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+<script>
+  const pb = new PocketBase('http://127.0.0.1:8090');
+</script>
+
+⚡ Features in Code:
+
+When I build it, it'll include:
+
+    📤 pb.collection('books').create({...})
+
+    📝 pb.collection('books').update(id, {...})
+
+    ❌ pb.collection('books').delete(id)
+
+    📡 Real-time subscribe:
+
+    pb.collection('books').subscribe('*', function (e) {
+      console.log('Book changed:', e.record)
+    })
+
