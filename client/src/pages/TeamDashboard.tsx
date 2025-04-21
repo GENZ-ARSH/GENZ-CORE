@@ -22,6 +22,7 @@ import { AlertCircle, Users, UserCheck, ChevronRight } from 'lucide-react';
 import { users } from '@/lib/mockData';
 import ChatBox from '@/components/chat/ChatBox';
 import AnnouncementBoard from '@/components/announcements/AnnouncementBoard';
+import LeaderboardPanel from '@/components/leaderboard/LeaderboardPanel';
 
 interface TeamMember {
   id: number;
@@ -315,6 +316,7 @@ export default function TeamDashboard() {
         </CardFooter>
       </Card>
       <div className="grid gap-6 mt-6">
+        <LeaderboardPanel />
         <AnnouncementBoard />
         <ChatBox />
       </div>
