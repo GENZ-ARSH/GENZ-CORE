@@ -12,12 +12,12 @@ export default function Header() {
   const { user } = useUser();
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm">
+    <header className="bg-white dark:bg-gray-800 shadow-sm neon-glass">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center">
           <Button 
             variant="ghost" 
-            className="md:hidden mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
+            className="md:hidden mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1 neon-button"
             onClick={toggle}
           >
             <Menu className="h-6 w-6" />
@@ -31,7 +31,7 @@ export default function Header() {
             <Input 
               type="text" 
               placeholder="Search books, resources..." 
-              className="w-64 pl-10 pr-4 py-2 text-sm"
+              className="w-64 pl-10 pr-4 py-2 text-sm neon-glass-primary focus:neon-border"
             />
           </div>
         </div>
@@ -41,7 +41,7 @@ export default function Header() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="rounded-full" 
+            className="rounded-full neon-button" 
             onClick={toggleTheme}
           >
             {theme === 'light' ? (
@@ -52,9 +52,9 @@ export default function Header() {
           </Button>
           
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="rounded-full relative">
+          <Button variant="ghost" size="icon" className="rounded-full relative neon-button">
             <Bell className="h-5 w-5" />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full shimmer"></span>
           </Button>
           
           {/* Mobile avatar */}
@@ -64,10 +64,10 @@ export default function Header() {
                 <img 
                   src={user.avatar} 
                   alt={`${user.fullName}'s avatar`} 
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-8 w-8 rounded-full object-cover neon-border"
                 />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center neon-glass-primary">
                   {user.fullName.charAt(0).toUpperCase()}
                 </div>
               )}

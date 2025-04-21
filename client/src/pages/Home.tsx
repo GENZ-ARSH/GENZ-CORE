@@ -76,15 +76,15 @@ export default function Home() {
   return (
     <div className="fade-in">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-primary to-accent rounded-xl p-6 text-white mb-6">
+      <div className="bg-gradient-to-r from-primary to-accent rounded-xl p-6 text-white mb-6 neon-glass neon-border glow-on-hover">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.fullName?.split(' ')[0] || 'User'}!</h1>
+            <h1 className="text-2xl font-bold mb-2 neon-text">Welcome back, {user?.fullName?.split(' ')[0] || 'User'}!</h1>
             <p className="opacity-90">You have {pendingTasks.length} pending tasks and {mockBooks.length} resources to explore.</p>
           </div>
           <div className="mt-4 md:mt-0">
             <button 
-              className="bg-white text-primary-700 font-medium px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
+              className="bg-white text-primary-700 font-medium px-4 py-2 rounded-lg hover:bg-opacity-90 transition neon-button"
               onClick={() => navigate('/tasks')}
             >
               View Tasks
@@ -148,21 +148,21 @@ export default function Home() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {mockBooks.slice(0, 4).map((book) => (
-            <div key={book.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden card-hover">
+            <div key={book.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden card-hover neon-glass">
               <img 
                 src={book.coverImage || ''} 
                 alt={`Book cover for ${book.title}`} 
                 className="h-40 w-full object-cover"
               />
               <div className="p-4">
-                <h3 className="font-semibold">{book.title}</h3>
+                <h3 className="font-semibold neon-text">{book.title}</h3>
                 <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                   <Download className="h-4 w-4 mr-1" />
                   <span>{book.downloadCount} downloads</span>
                 </div>
                 <div className="flex mt-3 space-x-2">
                   {book.tags?.slice(0, 2).map((tag, index) => (
-                    <span key={index} className={`px-2 py-1 text-xs bg-${index === 0 ? 'blue' : 'purple'}-100 dark:bg-${index === 0 ? 'blue' : 'purple'}-900/30 text-${index === 0 ? 'blue' : 'purple'}-700 dark:text-${index === 0 ? 'blue' : 'purple'}-300 rounded`}>
+                    <span key={index} className={`px-2 py-1 text-xs neon-glass-${index === 0 ? 'primary' : 'accent'} text-${index === 0 ? 'blue' : 'purple'}-700 dark:text-${index === 0 ? 'blue' : 'purple'}-300 rounded shimmer`}>
                       {tag}
                     </span>
                   ))}
