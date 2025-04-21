@@ -87,11 +87,14 @@ export default function Library() {
   return (
     <div className="fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold mb-2">Library & Resources</h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Browse through our collection of educational resources
-          </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">Library & Resources</h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Browse through our collection of educational resources
+            </p>
+          </div>
+          <AdminButton onSuccess={() => setIsAdminMode(true)} />
         </div>
         <Button 
           variant="outline"

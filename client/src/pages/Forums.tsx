@@ -14,12 +14,7 @@ export default function Forums() {
           <h1 className="text-2xl font-bold mb-2">Discussion Forums</h1>
           <p className="text-muted-foreground">Join the conversation</p>
         </div>
-        <Button 
-          className="bg-primary/80 backdrop-blur-sm"
-          onClick={() => setIsAdminMode(adminPassword === 'GENZCLANX')}
-        >
-          {isAdminMode ? "Admin Mode Active" : "Admin Login"}
-        </Button>
+        <AdminButton onSuccess={() => setIsAdminMode(true)} />
       </div>
 
       {isAdminMode && (

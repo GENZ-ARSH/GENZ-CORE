@@ -7,13 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function Courses() {
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-
-  const handleAdminLogin = () => {
-    if (adminPassword === 'GENZCLANX') {
-      setIsAdminMode(true);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -22,12 +15,7 @@ export default function Courses() {
           <h1 className="text-2xl font-bold mb-2">Course Catalog</h1>
           <p className="text-muted-foreground">Explore our comprehensive courses</p>
         </div>
-        <Button 
-          className="bg-primary/80 backdrop-blur-sm"
-          onClick={() => setAdminPassword('GENZCLANX')}
-        >
-          {isAdminMode ? "Admin Mode Active" : "Admin Login"}
-        </Button>
+        <AdminButton onSuccess={() => setIsAdminMode(true)} />
       </div>
 
       {isAdminMode && (
