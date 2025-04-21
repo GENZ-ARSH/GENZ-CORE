@@ -31,6 +31,14 @@ const categories = [
   { id: "general", name: "General", color: "bg-purple-500" },
 ];
 
+// Placeholder AdminButton component
+const AdminButton = ({ onSuccess }) => {
+  return (
+    <Button onClick={onSuccess}>Admin Panel</Button>
+  );
+};
+
+
 export default function Home() {
   const [, navigate] = useLocation();
   const { data: books, isLoading } = useQuery<BookType[]>({
@@ -50,12 +58,17 @@ export default function Home() {
           <div className="container relative z-10 py-12 md:py-16 lg:py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div className="space-y-5">
-                <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tighter">
-                  Your Complete Educational Resource Hub
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-[600px]">
-                  Access premium study materials, textbooks, and practice papers for NEET, JEE, NDA, and more.
-                </p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tighter">
+                      Your Complete Educational Resource Hub
+                    </h1>
+                    <p className="text-xl text-muted-foreground max-w-[600px]">
+                      Access premium study materials, textbooks, and practice papers for NEET, JEE, NDA, and more.
+                    </p>
+                  </div>
+                  <AdminButton onSuccess={() => navigate('/admin/books')} />
+                </div>
                 <div className="flex flex-wrap gap-4 pt-4">
                   <Button asChild size="lg" className="relative overflow-hidden group">
                     <Link href="/library">
@@ -154,7 +167,7 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        
+
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array(6).fill(0).map((_, index) => (
