@@ -57,7 +57,7 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pocketbase serve"
+args = "./pocketbase serve"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
