@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { useTheme } from '@/contexts/ThemeProvider';
+import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Sun, Moon, Lock, Search, Menu, X } from 'lucide-react';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AuthDialog } from '@/components/auth/AuthDialog';
+import { Sun, Moon, Lock, Search, Menu, X, User, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
